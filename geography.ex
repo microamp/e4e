@@ -99,14 +99,17 @@ end
 
 defimpl Inspect, for: City do
   def inspect(city, _) do
-    concat(city.name,
-           " (",
-           to_string(city.population),
-           ") ",
-           to_string(Float.round(city.latitude * 1.0, 2)),
-           "°N",
-           to_string(Float.round(city.longitude * 1.0, 2)),
-           "°W")
+    Enum.reduce(
+      Enum.reverse([city.name,
+                    " (",
+                    to_string(city.population),
+                    ") ",
+                    to_string(abs(Float.round(city.latitude * 1.0, 2))),
+                    "°N ",
+                    to_string(abs(Float.round(city.longitude * 1.0, 2))),
+                    "°W"]),
+      fn(a, b) -> a <> b end
+    )
   end
 end
 
