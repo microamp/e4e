@@ -1,6 +1,7 @@
 defmodule Dates do
   @moduledoc """
   Étude 5-3: Using String.split
+  Étude 8-4: Using Enum.split/2
   """
   @vsn 0.1
 
@@ -29,6 +30,21 @@ defmodule Dates do
     days_per_month = [31, days_in_feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
     day + month_total(month, days_per_month, 0)
+  end
+
+  @doc """
+  Use Enum.split/2 and List.foldl/3 to rewrite the Dates.julian/1 function from Étude 6-2. Hint: you’ll use those functions when calculating the total number of days up to (but not including) the month in question.
+  """
+  @spec julian_split(String.t) :: number
+
+  def julian_split(s) do
+    [year, month, day] = date_parts(s)
+
+    days_in_feb = if is_leap_year(year), do: 29, else: 28
+    days_per_month = [31, days_in_feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    {days, _} = Enum.split(days_per_month, month - 1)
+    day + List.foldl(days, 0, &(&1 + & 2))
   end
 
   @doc """
@@ -63,5 +79,13 @@ end
 60 = Dates.julian("1900-03-01")
 61 = Dates.julian("2000-03-01")
 1 = Dates.julian("2013-01-01")
+
+365 = Dates.julian_split("2013-12-31")
+366 = Dates.julian_split("2012-12-31")
+36 = Dates.julian_split("2012-02-05")
+36 = Dates.julian_split("2013-02-05")
+60 = Dates.julian_split("1900-03-01")
+61 = Dates.julian_split("2000-03-01")
+1 = Dates.julian_split("2013-01-01")
 
 IO.puts("tests passed!")
